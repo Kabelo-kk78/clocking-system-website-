@@ -45,7 +45,13 @@ export default function DailyQrEmail({
           </Text>
 
           <Section style={qrSection}>
-            <Img src={qrDataUrl} width="260" height="260" alt="Daily QR code" />
+            <Img
+              src={qrDataUrl}
+              width="260"
+              height="260"
+              alt="Daily QR code"
+              style={{ display: "block", margin: "0 auto" }}
+            />
           </Section>
 
           <Text style={paragraph}>Or tap the button below to open the check-in page:</Text>

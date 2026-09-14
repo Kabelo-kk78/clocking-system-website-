@@ -1,4 +1,5 @@
-import { buildCheckInUrl, buildQrImageUrl } from "@/lib/qr";
+import QRCode from "qrcode";
+import { buildCheckInUrl } from "@/lib/qr";
 import { formatDateSA } from "@/lib/dates";
 
 export interface SendTestEmailResult {
@@ -28,12 +29,18 @@ export async function sendTestEmail(to: string): Promise<SendTestEmailResult> {
     const dateLabel = formatDateSA(new Date());
     const testToken = `test-${Date.now().toString(36)}`;
     const checkInUrl = buildCheckInUrl(testToken);
-    const qrImageUrl = buildQrImageUrl(testToken);
+
+    const qrBuffer = await QRCode.toBuffer(checkInUrl, {
+      type: "png",
+      width: 300,
+      margin: 2,
+    });
+    const qrBase64 = qrBuffer.toString("base64");
 
     const template = DailyQrEmail({
       fullName: "Test Recipient",
       date: dateLabel,
-      qrDataUrl: qrImageUrl,
+      qrDataUrl: "cid:qr-test",
       checkInUrl,
     });
 
@@ -48,6 +55,13 @@ export async function sendTestEmail(to: string): Promise<SendTestEmailResult> {
       subject: `Test — Your Daily QR Email (${dateLabel})`,
       html,
       text,
+      attachments: [
+        {
+          filename: "qr-code.png",
+          content: qrBase64,
+          contentId: "qr-test",
+        },
+      ],
     });
 
     if (error) {

@@ -111,6 +111,22 @@ export default function EmailStatusPanel({ status, adminEmail }: EmailStatusPane
         />
       </div>
 
+      {status.apiKeyRestricted && (
+        <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
+          Your API key is restricted to sending only to the account owner email. To send to all
+          employees, verify your domain at{" "}
+          <a
+            href="https://resend.com/domains"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            resend.com/domains
+          </a>{" "}
+          and update <code>EMAIL_FROM</code> in your environment.
+        </p>
+      )}
+
       {status.domainRegistered === true && !status.domainVerified && (
         <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
           {status.senderDomain} is registered but delivery to real inboxes is blocked until its

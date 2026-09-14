@@ -3,6 +3,7 @@ import { getAppUrl } from "@/lib/qr";
 export interface EmailSetupStatus {
   apiKeyConfigured: boolean;
   apiKeyFormatValid: boolean;
+  apiKeyRestricted: boolean;
   fromAddress: string;
   senderEmail: string;
   senderDomain: string;
@@ -36,6 +37,7 @@ export async function getEmailSetupStatus(): Promise<EmailSetupStatus> {
   let domainRegistered: boolean | null = null;
   let domainVerified: boolean | null = null;
   let domainsError: string | null = null;
+  let apiKeyRestricted = false;
 
   if (apiKeyFormatValid && senderDomain) {
     try {
@@ -43,6 +45,7 @@ export async function getEmailSetupStatus(): Promise<EmailSetupStatus> {
       const result = await resend.domains.list();
       if (result.error) {
         domainsError = result.error.message;
+        apiKeyRestricted = result.error.name === "restricted_api_key";
       } else {
         const match = result.data.data.find((d) => d.name === senderDomain);
         if (match) {
@@ -61,6 +64,7 @@ export async function getEmailSetupStatus(): Promise<EmailSetupStatus> {
   return {
     apiKeyConfigured,
     apiKeyFormatValid,
+    apiKeyRestricted,
     fromAddress: process.env.EMAIL_FROM ?? DEFAULT_FROM,
     senderEmail,
     senderDomain,
