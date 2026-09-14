@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["firebase-admin", "qrcode"],
+  serverExternalPackages: ["qrcode"],
 };
 
 export default nextConfig;
