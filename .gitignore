@@ -39,3 +39,44 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Builds
+dist/
+build/
+client/dist/
+
+# Environment
+.env
+.env.local
+client/.env
+client/.env.local
+server/.env
+server/.env.local
+
+# Firebase credentials (never commit)
+service-account.json
+serviceAccountKey.json
+*.service-account.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Firebase deployment
+.firebase/
+.firebaserc

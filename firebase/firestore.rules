@@ -1,0 +1,68 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && userDoc().role == 'admin';
+    }
+
+    function isSelf(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ── users ─────────────────────────────────────────────
+    // Anyone signed in can read their own profile.
+    // Admins can read and manage all user profiles.
+    match /users/{userId} {
+      allow read: if isSelf(userId) || isAdmin();
+      allow create: if isSelf(userId);
+      allow update, delete: if isAdmin();
+    }
+
+    // ── companies ─────────────────────────────────────────
+    // Authenticated users need to read company location for the map/geofence.
+    // Only admins may modify company configuration.
+    match /companies/{companyId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ── dailyQrCodes ──────────────────────────────────────
+    // Employees need the current token to display/scan the QR.
+    // Only admins may create, rotate or revoke codes.
+    match /dailyQrCodes/{qrId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ── attendance ────────────────────────────────────────
+    // Employees may read their own records; admins may read all.
+    // All writes are performed by the trusted backend (Admin SDK bypasses rules),
+    // so client writes are denied entirely.
+    match /attendance/{attendanceId} {
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.employeeId == request.auth.uid);
+      allow write: if false;
+    }
+
+    // ── attendanceLogs ────────────────────────────────────
+    // Audit trail: admin-readable, server-written only.
+    match /attendanceLogs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ── default deny ──────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

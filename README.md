@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Attendance System
+
+Next.js attendance and clocking system using Firebase Authentication and
+Firestore, with daily QR codes and server-side geofence validation.
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies and configure the variables listed in `.env.example`:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` starts the development server.
+- `npm run lint` checks the codebase with ESLint.
+- `npm run build` typechecks and creates a production build.
+- `npm run seed` creates the admin and demo employee records.
 
-## Learn More
+## Firebase
 
-To learn more about Next.js, take a look at the following resources:
+The server uses the Firebase Admin SDK for Firestore and authentication. Set
+the required Firebase web and Admin SDK variables from `.env.example` before
+using authenticated flows. Firestore rules and indexes are deployed with:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+firebase deploy --only firestore:rules,firestore:indexes
+```
